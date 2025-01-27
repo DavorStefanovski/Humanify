@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/humanify
+    username: root
+    password: davor123
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+files:
+  profile-pictures: D:\Humanify\HumanifyAPI\HumanifyAPI\src\main\resources\profilepictures
+  event-pictures: D:\Humanify\HumanifyAPI\HumanifyAPI\src\main\resources\eventpictures
