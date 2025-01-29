@@ -40,10 +40,13 @@ public class UserService {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public UserResponse register(UserRequest request) throws IOException { //custom dto?
-        String fileName = UUID.randomUUID() + "_" + request.getProfilePicture().getOriginalFilename();
-        Path filePath = Paths.get(uploadDir, fileName);
-        Files.createDirectories(filePath.getParent());
-        Files.write(filePath, request.getProfilePicture().getBytes());
+        Path filePath = null;
+        if(request.getProfilePicture()!=null) {
+            String fileName = UUID.randomUUID() + "_" + request.getProfilePicture().getOriginalFilename();
+            filePath = Paths.get(uploadDir, fileName);
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, request.getProfilePicture().getBytes());
+        }
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
@@ -51,10 +54,10 @@ public class UserService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .password(encoder.encode(request.getPassword()))
-                .profilePictureUrl(filePath.toString())
+                .profilePictureUrl((request.getProfilePicture()==null)?"":filePath.toString())
                 .build();
         userRepository.save(user);
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(),Files.readAllBytes(filePath));
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(),(user.getProfilePictureUrl().isEmpty())? null :Files.readAllBytes(Path.of(user.getProfilePictureUrl())));
     }
 
     public String verify(LoginData loginData) {
@@ -70,7 +73,7 @@ public class UserService {
     public UserResponse getUser(Integer id) throws IOException {
         Optional<User> userOptional = userRepository.findById(id);
         User user = userOptional.get();
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(),Files.readAllBytes(Path.of(user.getProfilePictureUrl())));
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(),(user.getProfilePictureUrl().isEmpty())? null :Files.readAllBytes(Path.of(user.getProfilePictureUrl())));
     }
 
 

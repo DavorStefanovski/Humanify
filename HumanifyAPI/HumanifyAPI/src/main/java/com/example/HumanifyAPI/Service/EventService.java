@@ -83,17 +83,18 @@ public class EventService {
                 .build();
         event.setUser(user);
         Event eventsaved = eventRepository.save(event);
-
-        for(MultipartFile i : request.getPictures()) {
-            String fileName = UUID.randomUUID() + "_" + i.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, fileName);
-            Files.createDirectories(filePath.getParent());
-            Files.write(filePath, i.getBytes());
-            EventPicture pom = EventPicture.builder()
-                    .pictureUrl(String.valueOf(filePath))
-                    .event(eventsaved)
-                    .build();
-            eventPictureRepository.save(pom);
+        if(request.getPictures()!=null) {
+            for (MultipartFile i : request.getPictures()) {
+                String fileName = UUID.randomUUID() + "_" + i.getOriginalFilename();
+                Path filePath = Paths.get(uploadDir, fileName);
+                Files.createDirectories(filePath.getParent());
+                Files.write(filePath, i.getBytes());
+                EventPicture pom = EventPicture.builder()
+                        .pictureUrl(String.valueOf(filePath))
+                        .event(eventsaved)
+                        .build();
+                eventPictureRepository.save(pom);
+            }
         }
 
 
