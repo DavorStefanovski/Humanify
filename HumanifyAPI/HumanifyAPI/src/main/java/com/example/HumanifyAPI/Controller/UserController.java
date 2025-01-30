@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping("/changepic")
-    public void login(@RequestParam MultipartFile file) throws IOException {
+    public void changepic(@RequestParam MultipartFile file) throws IOException {
          userService.uploadProfilePicture(file);
     }
 
