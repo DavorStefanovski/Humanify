@@ -3,6 +3,7 @@ package com.example.HumanifyAPI.Controller;
 import com.example.HumanifyAPI.DTO.LoginData;
 import com.example.HumanifyAPI.DTO.UserRequest;
 import com.example.HumanifyAPI.DTO.UserResponse;
+import com.example.HumanifyAPI.DTO.UserWithEventsResponse;
 import com.example.HumanifyAPI.Model.Event;
 import com.example.HumanifyAPI.Service.EventService;
 import com.example.HumanifyAPI.Service.UserService;
@@ -38,6 +39,17 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Integer id) throws IOException {
         return userService.getUser(id);
+    }
+
+
+    @GetMapping("/currentuser")
+    public UserResponse getCurrentUser() throws IOException {
+        return userService.getCurrentUser();
+    }
+
+    @GetMapping("/currentuserevents")
+    public UserWithEventsResponse getCurrentUserWithEvents() throws IOException {
+        return userService.getCurrentUserWithEvents();
     }
 
     @PostMapping("/participate/{id}")

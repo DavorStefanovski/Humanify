@@ -39,6 +39,20 @@ public class EventController {
         return eventService.getEvents(category,place,until);
     }
 
+    @GetMapping("/bylocation")
+    public List<EventResponse> getEventsByLocation(@RequestParam(required = false) List<Category> category, @RequestParam(required = false) String place, @RequestParam(required = false) LocalDateTime until, @RequestParam(required = false, defaultValue = "30") Integer range, @RequestParam Double lat, @RequestParam Double lon) throws IOException {
+        if(category == null) {
+            category = new ArrayList<>();
+            for (Category i : Category.values()) {
+                category.add(i);
+            }
+        }
+        if(until == null){
+            until = LocalDateTime.now().plusYears(2);
+        }
+        return eventService.getEventsByLocation(category,place,until,range,lat,lon);
+    }
+
     @PostMapping()
     public void postEvent(@ModelAttribute EventRequest event) throws IOException {
         eventService.addEvent(event);

@@ -7,7 +7,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+#    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 files:
   profile-pictures: D:\Humanify\HumanifyAPI\HumanifyAPI\src\main\resources\profilepictures
   event-pictures: D:\Humanify\HumanifyAPI\HumanifyAPI\src\main\resources\eventpictures

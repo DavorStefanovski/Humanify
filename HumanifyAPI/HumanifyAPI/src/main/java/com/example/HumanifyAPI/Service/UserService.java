@@ -1,11 +1,7 @@
 package com.example.HumanifyAPI.Service;
 
-import com.example.HumanifyAPI.DTO.LoginData;
-import com.example.HumanifyAPI.DTO.UserRequest;
-import com.example.HumanifyAPI.DTO.UserResponse;
-import com.example.HumanifyAPI.Model.Event;
-import com.example.HumanifyAPI.Model.MyUserDetails;
-import com.example.HumanifyAPI.Model.User;
+import com.example.HumanifyAPI.DTO.*;
+import com.example.HumanifyAPI.Model.*;
 import com.example.HumanifyAPI.Repository.EventRepository;
 import com.example.HumanifyAPI.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 @Service
@@ -75,6 +73,12 @@ public class UserService {
         User user = userOptional.get();
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(),(user.getProfilePictureUrl().isEmpty())? null :Files.readAllBytes(Path.of(user.getProfilePictureUrl())));
     }
+    public UserResponse getCurrentUser() throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findUserByUsername(myUserDetails.getUsername());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(),(user.getProfilePictureUrl().isEmpty())? null :Files.readAllBytes(Path.of(user.getProfilePictureUrl())));
+    }
 
 
     public void participate(Integer id) {
@@ -101,5 +105,28 @@ public class UserService {
 
         user.setProfilePictureUrl(filePath.toString());
         userRepository.save(user);
+    }
+
+    public UserWithEventsResponse getCurrentUserWithEvents() throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findUserByUsername(myUserDetails.getUsername());
+        List<Event> eventList = user.getParticipatingEvents();
+        List<EventResponse> response = new ArrayList<>();
+        for( Event i : eventList){
+            List<byte[]> pictures = new ArrayList<>();
+            for( EventPicture j : i.getPictures()){
+                pictures.add(Files.readAllBytes(Path.of(j.getPictureUrl())));
+            }
+            UserResponse userResponse = new UserResponse(i.getUser().getId(), i.getUser().getUsername(), i.getUser().getEmail(), i.getUser().getFirstName(), i.getUser().getLastName(), i.getUser().getBirthDate(),(i.getUser().getProfilePictureUrl().isEmpty())? null :Files.readAllBytes(Path.of(i.getUser().getProfilePictureUrl())));
+            List<DiscussionResponse> discussionResponses = new ArrayList<>();
+            for(Discussion d : i.getDiscussions()){
+                UserResponse userResponseD = new UserResponse(d.getUser().getId(), d.getUser().getUsername(), d.getUser().getEmail(), d.getUser().getFirstName(), d.getUser().getLastName(), d.getUser().getBirthDate(),(d.getUser().getProfilePictureUrl().isEmpty())? null :Files.readAllBytes(Path.of(d.getUser().getProfilePictureUrl())));
+                discussionResponses.add(new DiscussionResponse(d.getId(),d.getText(),d.getDateTime(),userResponseD));
+            }
+            EventResponse curr = new EventResponse(i.getId(), i.getPlace(), i.getTitle(), i.getDescription(),i.getCategory(),i.getDateTime(),i.getLat(),i.getLon(),userResponse,i.getParticipants(),discussionResponses,pictures);
+            response.add(curr);
+        }
+        return new UserWithEventsResponse(user.getId(), user.getUsername(),user.getEmail(),user.getFirstName(), user.getLastName(), user.getBirthDate(),(user.getProfilePictureUrl().isEmpty())? null:Files.readAllBytes(Path.of(user.getProfilePictureUrl())),response);
     }
 }

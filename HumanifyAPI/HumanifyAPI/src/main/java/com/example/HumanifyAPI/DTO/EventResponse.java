@@ -23,8 +23,8 @@ public class EventResponse {
     private LocalDateTime dateTime;
     private Double lat;
     private Double lon;
-    private User user;
+    private UserResponse user;
     private List<User> participants;
-    private List<Discussion> discussions;
+    private List<DiscussionResponse> discussions;
     private List<byte[]> pictures;
 }
