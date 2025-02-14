@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Humanify</string>
+    <string name="my_api_key">AIzaSyAvJJucGf0hGLfPEHlr_DzIa3fvMP-8Y4o</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Register">Register</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="click_to_login">Click to login</string>
+    <string name="firstname">Firstname</string>
+    <string name="lastname">Lastname</string>
+
+</resources>
